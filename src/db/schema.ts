@@ -57,6 +57,8 @@ export const tweetsTable = pgTable(
       }),
     replyToTweetId: integer("reply_to_tweet_id"),
     createdAt: timestamp("created_at").default(sql`now()`),
+    startDate: varchar("start_date"),
+    endDate: varchar("end_date"),  
   },
   (table) => ({
     userHandleIndex: index("user_handle_index").on(table.userHandle),

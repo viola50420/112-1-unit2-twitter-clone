@@ -24,7 +24,7 @@ type TweetProps = {
 
 // note that the Tweet component is also a server component
 // all client side things are abstracted away in other components
-export default function Tweet({
+export default function Reply({
   username,
   handle,
   id,
@@ -41,7 +41,7 @@ export default function Tweet({
     <>
     <div className="container mx-auto">
 
-        <div className="bg-white rounded-lg p-4 mb-4 shadow-md max-w-lg mx-auto">
+    <div className="bg-white rounded-lg p-4 mb-4 shadow-md max-w-3xl mx-auto">
 
       <Link
         className="w-full px-4 pt-3 transition-colors hover:bg-gray-50"
@@ -63,9 +63,7 @@ export default function Tweet({
            
           </article>
           </div>
-          <span className="ml-2 font-normal text-gray-400">
-          {likes ?? 0} 人已參加
-          </span>
+      
         </div>
       </Link>
       </div>

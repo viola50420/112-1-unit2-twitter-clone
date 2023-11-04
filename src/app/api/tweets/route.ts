@@ -14,6 +14,8 @@ const postTweetRequestSchema = z.object({
   handle: z.string().min(1).max(50),
   content: z.string().min(1).max(280),
   replyToTweetId: z.number().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
 });
 
 // you can use z.infer to get the typescript type from a zod schema
@@ -40,7 +42,7 @@ export async function POST(request: NextRequest) {
   // the `as` keyword is a type assertion, this tells typescript
   // that we know what we're doing and that the data is of type LikeTweetRequest.
   // This is safe now because we've already validated the data with zod.
-  const { handle, content, replyToTweetId } = data as PostTweetRequest;
+  const { handle, content, replyToTweetId, startDate, endDate } = data as PostTweetRequest;
 
   try {
     // This piece of code runs the following SQL query:
@@ -59,12 +61,14 @@ export async function POST(request: NextRequest) {
         userHandle: handle,
         content,
         replyToTweetId,
+        startDate,
+        endDate,
       })
       .execute();
   } catch (error) {
     // The NextResponse object is a easy to use API to handle responses.
     // IMHO, it's more concise than the express API.
-    return NextResponse.json(
+    return NextResponse.json( 
       { error: "Something went wrong" },
       { status: 500 },
     );

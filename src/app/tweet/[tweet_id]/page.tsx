@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { db } from "@/db";
 import { likesTable, tweetsTable, usersTable } from "@/db/schema";
 import { getAvatar } from "@/lib/utils";
+import Reply from "@/components/reply";
 
 type TweetPageProps = {
   params: {
@@ -72,6 +73,9 @@ export default async function TweetPage({
       content: tweetsTable.content,
       userHandle: tweetsTable.userHandle,
       createdAt: tweetsTable.createdAt,
+      startDate: tweetsTable.startDate, 
+      endDate: tweetsTable.endDate, 
+
     })
     .from(tweetsTable)
     .where(eq(tweetsTable.id, tweet_id_num))
@@ -133,6 +137,8 @@ export default async function TweetPage({
     handle: user.handle,
     likes: numLikes,
     createdAt: tweetData.createdAt,
+    startDate: tweetData.startDate, 
+    endDate: tweetData.endDate, 
     liked: Boolean(liked),
   };
 
@@ -176,81 +182,90 @@ export default async function TweetPage({
     .leftJoin(likesSubquery, eq(tweetsTable.id, likesSubquery.tweetId))
     .leftJoin(likedSubquery, eq(tweetsTable.id, likedSubquery.tweetId))
     .execute();
+   
+    const startDate = new Date(tweet.startDate);
+    const endDate = new Date(tweet.endDate);
+    
+    const startDateString = startDate.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+    });
+    
+    const endDateString = endDate.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
 
+    });
+    
+    
   return (
     <>
-      <div className="flex h-screen w-full max-w-2xl flex-col overflow-scroll pt-2">
-        <div className="mb-2 flex items-center gap-8 px-4">
-          <Link href={{ pathname: "/", query: { username, handle } }}>
-            <ArrowLeft size={18} />
-          </Link>
-          <h1 className="text-xl font-bold">Tweet</h1>
-        </div>
-        <div className="flex flex-col px-4 pt-3">
-          <div className="flex justify-between">
-            <div className="flex w-full gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={getAvatar(tweet.username)}
-                alt="user avatar"
-                width={48}
-                height={48}
-                className="h-12 w-12 rounded-full"
-              />
-              <div>
-                <p className="font-bold">{tweet.username ?? "..."}</p>
-                <p className="font-normal text-gray-500">
-                  @{tweet.handle ?? "..."}
-                </p>
-              </div>
-            </div>
-            <button className="h-fit rounded-full p-2.5 text-gray-400 transition-colors duration-300 hover:bg-brand/10 hover:text-brand">
-              <MoreHorizontal size={16} />
-            </button>
-          </div>
-          <article className="mt-3 whitespace-pre-wrap text-xl">
-            {tweet.content}
-          </article>
-          <time className="my-4 block text-sm text-gray-500">
-            <TimeText date={tweet.createdAt} format="h:mm A · D MMM YYYY" />
-          </time>
-          <Separator />
-          <div className="my-2 flex items-center justify-between gap-4 text-gray-400">
-            <button className="rounded-full p-1.5 transition-colors duration-300 hover:bg-brand/10 hover:text-brand">
-              <MessageCircle size={20} className="-scale-x-100" />
-            </button>
-            <button className="rounded-full p-1.5 transition-colors duration-300 hover:bg-brand/10 hover:text-brand">
-              <Repeat2 size={22} />
-            </button>
-            <LikeButton
-              handle={handle}
-              initialLikes={tweet.likes}
-              initialLiked={tweet.liked}
-              tweetId={tweet.id}
-            />
-            <button className="rounded-full p-1.5 transition-colors duration-300 hover:bg-brand/10 hover:text-brand">
-              <Share size={18} />
-            </button>
-          </div>
-          <Separator />
-        </div>
-        <ReplyInput replyToTweetId={tweet.id} replyToHandle={tweet.handle} />
-        <Separator />
-        {replies.map((reply) => (
-          <Tweet
-            key={reply.id}
-            id={reply.id}
-            username={username}
-            handle={handle}
-            authorName={reply.username}
-            authorHandle={reply.handle}
-            content={reply.content}
-            likes={reply.likes}
-            liked={reply.liked}
-            createdAt={reply.createdAt!}
-          />
-        ))}
+   <div className="flex h-screen w-full flex-col overflow-scroll pt-2">
+  <div className="mb-2 flex items-center gap-8 px-4">
+    <Link href={{ pathname: "/", query: { username, handle } }}>
+      <ArrowLeft size={18} />
+    </Link>
+    <h1 className="text-xl font-bold">Tweet</h1>
+  </div>
+
+  <div className="flex flex-col px-4 pt-3">
+    <div className="flex justify-between items-center mb-4">
+      <div>
+        <p className="font-bold">{tweet.username ?? "..."}</p>
+        {/* Uncomment the next line if you want to display the handle */}
+        {/* <p className="font-normal text-gray-500">@{tweet.handle ?? "..."}</p> */}
       </div>
+      <div className="flex gap-3">
+        <LikeButton
+          handle={handle}
+          initialLikes={tweet.likes}
+          initialLiked={tweet.liked}
+          tweetId={tweet.id}
+        />
+        {/* <button className="h-fit rounded-full p-2.5 text-gray-400 transition-colors duration-300 hover:bg-brand/10 hover:text-brand">
+          <MoreHorizontal size={16} />
+        </button> */}
+      </div>
+    </div>
+
+    <article className="mt-3 whitespace-pre-wrap text-xl">
+      {tweet.content}
+    </article>
+
+
+    <div className="flex gap-3 items-center mt-4"> 
+  <p className="font-bold mb-2">開始時間: {startDateString}</p>
+  <p className="font-bold mb-2">結束時間: {endDateString}</p>
+  <div className="ml-auto">
+    <p className="mb-2">{tweet.likes} 人已參加</p>
+  </div>
+
+</div>
+
+    <Separator />
+    <ReplyInput replyToTweetId={tweet.id} replyToHandle={tweet.handle} />
+    <Separator />
+
+    {replies.map((reply) => (
+      <Reply
+        key={reply.id}
+        id={reply.id}
+        username={username}
+        handle={handle}
+        authorName={reply.username}
+        authorHandle={reply.handle}
+        content={reply.content}
+        likes={reply.likes}
+        liked={reply.liked}
+        createdAt={reply.createdAt!}
+      />
+    ))}
+  </div>
+</div>
     </>
   );
 }

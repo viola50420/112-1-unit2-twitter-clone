@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn, validateHandle, validateUsername } from "@/lib/utils";
+import { cn,  validateUsername } from "@/lib/utils";
 
 export default function NameDialog() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -29,7 +29,7 @@ export default function NameDialog() {
   const usernameInputRef = useRef<HTMLInputElement>(null);
   const handleInputRef = useRef<HTMLInputElement>(null);
   const [usernameError, setUsernameError] = useState(false);
-  const [handleError, setHandleError] = useState(false);
+  // const [handleError, setHandleError] = useState(false);
 
   // check if the username and handle are valid when the component mounts
   // only show the dialog if the username or handle is invalid
@@ -37,7 +37,8 @@ export default function NameDialog() {
     const username = searchParams.get("username");
     const handle = searchParams.get("handle");
     // if any of the username or handle is not valid, open the dialog
-    setDialogOpen(!validateUsername(username) || !validateHandle(handle));
+   
+    setDialogOpen(!validateUsername(username) || !validateUsername(handle));
   }, [searchParams]);
 
   // handleSave modifies the query params to set the username and handle
@@ -48,11 +49,11 @@ export default function NameDialog() {
     const handle = handleInputRef.current?.value;
 
     const newUsernameError = !validateUsername(username);
+    const newHandleError = !validateUsername(handle);
     setUsernameError(newUsernameError);
-    const newHandleError = !validateHandle(handle);
-    setHandleError(newHandleError);
+    //setHandleError(newHandleError);
 
-    if (newUsernameError || newHandleError) {
+    if (newUsernameError ) {
       return false;
     }
 
@@ -129,17 +130,17 @@ export default function NameDialog() {
               <Input
                 placeholder="web.prog"
                 defaultValue={searchParams.get("handle") ?? ""}
-                className={cn(handleError && "border-red-500")}
+                className={cn( "border-red-500")}
                 ref={handleInputRef}
               />
             </div>
-            {handleError && (
+            {/* {handleError && (
               <p className="col-span-3 col-start-2 text-xs text-red-500">
                 Invalid handle, use only{" "}
                 <span className="font-mono">[a-z0-9\._-]</span>, must be between
                 1 and 25 characters long.
               </p>
-            )}
+            )} */}
           </div>
         </div>
         <DialogFooter>

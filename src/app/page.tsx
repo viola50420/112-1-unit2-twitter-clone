@@ -3,6 +3,7 @@ import { eq, desc, isNull, sql } from "drizzle-orm";
 import NameDialog from "@/components/NameDialog";
 import Tweet from "@/components/Tweet";
 import TweetInput from "@/components/TweetInput";
+import HomePageTop from "@/components/HomePageTop";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db";
 import { likesTable, tweetsTable, usersTable } from "@/db/schema";
@@ -119,6 +120,8 @@ export default async function Home({
       handle: usersTable.handle,
       likes: likesSubquery.likes,
       createdAt: tweetsTable.createdAt,
+      startDate: tweetsTable.startDate,
+      endDate: tweetsTable.endDate,
       liked: likedSubquery.liked,
     })
     .from(tweetsTable)
@@ -134,30 +137,35 @@ export default async function Home({
     .leftJoin(likedSubquery, eq(tweetsTable.id, likedSubquery.tweetId))
     .execute();
 
+      
+    
+    
   return (
     <>
-      <div className="flex h-screen w-full max-w-2xl flex-col overflow-scroll pt-2">
-        <h1 className="mb-2 bg-white px-4 text-xl font-bold">Home</h1>
-        <div className="w-full px-4 pt-3">
+   <div className="flex h-screen w-full flex-col overflow-scroll pt-2">
+  <h1 className="mb-4 bg-white px-4 text-xl font-bold shadow-md">Home</h1>
+      {/* <div className="w-full px-4 pt-3">
           <TweetInput />
-        </div>
-        <Separator />
-        {tweets.map((tweet) => (
-          <Tweet
-            key={tweet.id}
-            id={tweet.id}
-            username={username}
-            handle={handle}
-            authorName={tweet.username}
-            authorHandle={tweet.handle}
-            content={tweet.content}
-            likes={tweet.likes}
-            liked={tweet.liked}
-            createdAt={tweet.createdAt!}
-          />
-        ))}
-      </div>
-      <NameDialog />
-    </>
+      </div> */}
+      <HomePageTop className="mb-4" />
+      {/* <Separator /> */}
+      {tweets.map((tweet) => (
+        <Tweet
+          key={tweet.id}
+          id={tweet.id}
+          username={username}
+          handle={handle}
+          authorName={tweet.username}
+          authorHandle={tweet.handle}
+          content={tweet.content}
+          likes={tweet.likes}
+          liked={tweet.liked}
+          createdAt={tweet.createdAt!}
+
+        />
+      ))}
+    </div>
+    <NameDialog />
+  </>
   );
 }

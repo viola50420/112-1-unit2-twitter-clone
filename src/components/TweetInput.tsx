@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { ChevronDown } from "lucide-react";
 
@@ -10,6 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import useTweet from "@/hooks/useTweet";
 import useUserInfo from "@/hooks/useUserInfo";
 import { cn } from "@/lib/utils";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function TweetInput() {
   const { handle } = useUserInfo();
@@ -25,6 +27,8 @@ export default function TweetInput() {
       await postTweet({
         handle,
         content,
+        startDate,
+        endDate,  
       });
       textareaRef.current.value = "";
       // this triggers the onInput event on the growing textarea
@@ -38,15 +42,17 @@ export default function TweetInput() {
       alert("Error posting tweet");
     }
   };
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndtDate] = useState(new Date());
 
   return (
     <div className="flex gap-4" onClick={() => textareaRef.current?.focus()}>
       <UserAvatar className="h-12 w-12" />
       <div className="flex w-full flex-col px-2">
-        <button className="flex w-fit items-center rounded-full border-[1px] border-gray-300 px-2 text-sm font-bold text-brand">
+        {/* <button className="flex w-fit items-center rounded-full border-[1px] border-gray-300 px-2 text-sm font-bold text-brand">
           Everyone
           <ChevronDown size={16} className="text-gray-300" />
-        </button>
+        </button> */}
         <div className="mb-2 mt-6">
           <GrowingTextarea
             ref={textareaRef}
@@ -54,7 +60,9 @@ export default function TweetInput() {
             placeholder="What's happening?"
           />
         </div>
-        <Separator />
+       
+    
+       <Separator />
         <div className="flex justify-end">
           <button
             className={cn(
